@@ -1,6 +1,6 @@
 #!/usr/bin/env bash 
 
-set -e
+set -euo pipefail
 
 if [[ $# -ne 2 ]]; then
     echo "Usage: $0 source-directory destination-directory"
