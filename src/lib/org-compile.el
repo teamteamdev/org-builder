@@ -14,6 +14,7 @@
 ;;
 ;; Org is good!
 
+(setq vc-handled-backends nil) ;; we don't need any git
 (setq make-backup-files nil) ;; keep emacs from creating backup files like: foo.txt~
 (setq user-full-name "Headless Org") ;; so we get an author tag
 
