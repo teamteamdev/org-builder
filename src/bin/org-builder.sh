@@ -10,6 +10,7 @@ fi
 package_dir=$(dirname "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")")
 source_dir=$(realpath "$1")
 temp_dir=$(mktemp -d)
+chmod 755 "$(temp_dir)"
 trap 'rm -rf $temp_dir' EXIT 
 destination_dir=$(realpath "$2")
 
