@@ -23,8 +23,8 @@
         } ''
           install -Dm755 $src/lib/org-compile.el $out/lib/org-compile.el
           install -Dm755 $src/bin/org-builder.sh $out/bin/org-builder
-          wrapProgram $out/bin/org-builder --prefix "$out/bin:$binPath"
-          patchShebangs $out/lib/org-compile.el $out/bin
+          wrapProgram $out/bin/org-builder --set PATH "$out/bin:$binPath"
+          patchShebangs $out/bin
         '';
       };
     } // (flake-utils.lib.eachDefaultSystem (system:
