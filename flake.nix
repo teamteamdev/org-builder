@@ -15,9 +15,10 @@
           buildInputs = [pkgs.bash];
           binPath = with pkgs;
             lib.strings.makeBinPath [
-              coreutils
               bash
+              coreutils
               emacs
+              findutils
               rsync
             ];
         } ''
