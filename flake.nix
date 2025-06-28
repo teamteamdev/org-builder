@@ -6,48 +6,54 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = {
+    self,
+    nixpkgs,
+    flake-utils,
+  }:
     {
       overlays.default = final: prev: {
-        org-builder = with final; pkgs.runCommand "org-builder" {
-          src = ./src;
-          nativeBuildInputs = [pkgs.makeWrapper];
-          buildInputs = [pkgs.bash];
-          binPath = with pkgs;
-            lib.strings.makeBinPath [
-              bash
-              coreutils
-              emacs
-              findutils
-              rsync
-            ];
-        } ''
-          install -Dm755 $src/lib/org-compile.el $out/lib/org-compile.el
-          install -Dm755 $src/bin/org-builder.sh $out/bin/org-builder
-          wrapProgram $out/bin/org-builder --set PATH "$out/bin:$binPath"
-          patchShebangs $out/bin
-        '';
+        org-builder = with final;
+          pkgs.runCommand "org-builder" {
+            src = ./src;
+            nativeBuildInputs = [pkgs.makeWrapper];
+            buildInputs = [pkgs.bash];
+            binPath = with pkgs;
+              lib.strings.makeBinPath [
+                bash
+                coreutils
+                emacs
+                findutils
+                rsync
+              ];
+          } ''
+            install -Dm755 $src/lib/org-compile.el $out/lib/org-compile.el
+            install -Dm755 $src/bin/org-builder.sh $out/bin/org-builder
+            wrapProgram $out/bin/org-builder --set PATH "$out/bin:$binPath"
+            patchShebangs $out/bin
+          '';
       };
-    } // (flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [ self.overlays.default ];
-        };
+    }
+    // (flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [self.overlays.default];
+      };
 
-        app = flake-utils.lib.mkApp {
-          drv = pkgs.org-builder;
-        };
-      in
-      {
-        packages = {
-          org-builder = pkgs.org-builder;
-          default = pkgs.org-builder;
-        };
+      app = flake-utils.lib.mkApp {
+        drv = pkgs.org-builder;
+      };
+    in {
+      packages = {
+        org-builder = pkgs.org-builder;
+        default = pkgs.org-builder;
+      };
 
-        apps = {
-          org-builder = app;
-          default = app;
-        };
-      }));
+      apps = {
+        org-builder = app;
+        default = app;
+      };
+
+      formatter = pkgs.alejandra;
+    }));
 }
